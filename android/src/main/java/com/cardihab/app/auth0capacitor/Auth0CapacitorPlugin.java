@@ -12,11 +12,25 @@ public class Auth0CapacitorPlugin extends Plugin {
     private Auth0Capacitor implementation = new Auth0Capacitor();
 
     @PluginMethod
-    public void echo(PluginCall call) {
-        String value = call.getString("value");
+    public void createAuth0Client(PluginCall call) {
+        call.resolve();
+    }
 
-        JSObject ret = new JSObject();
-        ret.put("value", implementation.echo(value));
-        call.resolve(ret);
+    @PluginMethod
+    public void login(PluginCall call) {
+        String scope = call.getString("scope");
+        String  audience = call.getString("audience");
+
+        call.resolve();
+    }
+
+    @PluginMethod
+    public void logout(PluginCall call) {
+        call.resolve();
+    }
+
+    @PluginMethod
+    public void getUser(PluginCall call) {
+        call.resolve();
     }
 }

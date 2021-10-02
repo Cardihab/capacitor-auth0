@@ -1,3 +1,19 @@
 export interface Auth0CapacitorPlugin {
-  echo(options: { value: string }): Promise<{ value: string }>;
+  createAuth0Client(options: {
+    domain: string;
+    clientId: string;
+  }): Promise<void>;
+
+  login(options: { 
+    scope: string;
+    audience: string;
+    appState?: string;
+  }): Promise<{ accessToken: string; idToken: string; expiresIn: string, refreshToken: string; }>;
+  
+  logout(): Promise<void>;
+
+  renew(): Promise<{ accessToken: string; idToken: string; expiresIn: string, refreshToken: string; }>;
+
+  getUser(): Promise<any>;
 }
+
