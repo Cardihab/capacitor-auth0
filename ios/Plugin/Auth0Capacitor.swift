@@ -45,6 +45,28 @@ import Foundation
         }
         
     }
+
+    public func getAccessTokenSilently(callback:  @escaping Request<Credentials, AuthenticationError>.Callback) -> Void {
+        self.credentialsManager.credentials { err, creds in
+            if (err == nil) {
+                if (creds!.expiresIn != nil &&  creds!.expiresIn! < Date()) {
+                    callback(Result.success(creds!))
+
+                } else if (creds!.refreshToken != nil) {
+                    Auth0
+                        .authentication()
+                        .logging(enabled: true)
+                        .renew(withRefreshToken: creds!.refreshToken!)
+                        .start(callback)
+                } else {
+                    callback(Result<Credentials>.failure(AuthenticationError(string: "Not logged in", statusCode: 0)))
+                }
+            } else {
+                callback(Result<Credentials>.failure(AuthenticationError(string: err?.localizedDescription)))
+            }
+        }
+        
+    }
     
     public func logout() -> Void {
         Auth0

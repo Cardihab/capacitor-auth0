@@ -7,43 +7,68 @@ export class Auth0CapacitorWeb
   extends WebPlugin
   implements Auth0CapacitorPlugin {
 
-  auth0?: Auth0Client;
+  _auth0?: Promise<Auth0Client>;
+  domain?: string;
+  client_id?: string;
+
+  get auth0() {
+    return this._auth0;
+  }
+
+  set auth0(client) {
+    this._auth0 = client;
+  }
 
   async createAuth0Client(options: {
     domain: string;
     clientId: string;
   }): Promise<void> {
-    this.auth0 = await createAuth0Client({
+    
+    this.auth0 = createAuth0Client({
       domain: options.domain,
       client_id: options.clientId
     });
+
+    this.domain = options.domain;
+    this.client_id = options.clientId
   }
   
-  async login(options: {
+  async login(clientOptions: {
+    domain: string;
+    clientId: string;
+  }, options: {
     scope: string;
     appState?: string;
     audience: string;
+    redirect_uri?: string
   }): Promise<any> {
 
     try {
-      const isAuth = await this.auth0?.isAuthenticated();
-      if (isAuth) {
-        return await this.auth0?.getTokenSilently()
-      } else {
-        const query = window.location.search;
-        if (query.includes("code=") && query.includes("state=")) {
-          // Process the login state
-          const result = await this.auth0?.handleRedirectCallback();
+      const client: Auth0Client = await createAuth0Client({
+        domain: clientOptions.domain,
+        client_id: clientOptions.clientId
+      });
+      const query = window.location.search;
+      if (query.includes("code=") && query.includes("state=")) {
+        // Process the login state
+        
+        const resultP = client?.handleRedirectCallback()
+        .then((result) => {
           console.log(result);
-          return await this.auth0?.getTokenSilently();
-        } else {
-          throw 'not authenticated';
-        }
+          if (result) return client?.getTokenSilently();
+          else throw 'Not authenticated';
+        }).catch(err => {
+          console.error(err);
+          throw err;
+        });
+        return await resultP;
+
+      } else {
+        throw 'not authenticated';
       }
     } catch (err) {
-      await this.auth0?.loginWithRedirect({
-        ...options,
-        redirect_uri: window.location.origin
+      (await this.auth0)?.loginWithRedirect({
+        ...options
       });
     }
 
@@ -51,17 +76,37 @@ export class Auth0CapacitorWeb
   }
 
   async renew() {
-    return await this.auth0?.getTokenSilently();
+    const client = await this.auth0;
+    const isAuth = client?.isAuthenticated();
+    if (isAuth) {
+      return client?.getTokenSilently()
+    } else {
+      const query = window.location.search;
+      if (query.includes("code=") && query.includes("state=")) {
+        // Process the login state
+        return client?.handleRedirectCallback(location.href)
+        .then((result) => {
+          console.log(result);
+          return client?.getTokenSilently();
+        });
+    } else {
+        throw 'not authenticated';
+      }
+    }
   }
   
   async logout() {
-    this.auth0?.logout({
+    (await this.auth0)?.logout({
       returnTo: window.location.origin
     });
   }
 
   async getUser(): Promise<any>{ 
-    this.auth0?.getUser();
+    (await this.auth0)?.getUser();
+  }
+
+  async getTokenSilently(): Promise<{ accessToken: string; idToken: string; expiresIn: string, refreshToken: string; }> {
+    return this.renew();
   }
 }
 

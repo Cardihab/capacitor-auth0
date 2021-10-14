@@ -29,10 +29,10 @@ public class Auth0CapacitorPlugin: CAPPlugin {
                     call.reject(error.localizedDescription)
                 case .success(let credentials):
                     call.resolve([
-                        "accessToken": credentials.accessToken,
-                        "idToken": credentials.idToken,
-                        "refreshToken": credentials.refreshToken,
-                        "expiresIn": credentials.expiresIn
+                        "accessToken": credentials.accessToken!,
+                        "idToken": credentials.idToken!,
+                        "refreshToken": credentials.refreshToken!,
+                        "expiresIn": credentials.expiresIn!
                     ])
             }
         }
@@ -40,6 +40,25 @@ public class Auth0CapacitorPlugin: CAPPlugin {
 
     @objc func renew(_ call: CAPPluginCall) {
         implementation.renew { result in
+            switch result {
+                case .failure(let error):
+                    // Handle the error
+                    print("Error: \(error)")
+                    call.reject(error.localizedDescription)
+                case .success(let credentials):
+                    call.resolve([
+                        "accessToken": credentials.accessToken!,
+                        "idToken": credentials.idToken!,
+                        "refreshToken": credentials.refreshToken!,
+                        "expiresIn": credentials.expiresIn!
+                    ])
+
+            }
+        }
+    }
+
+    @objc func getAccessTokenSilently(_ call: CAPPluginCall) {
+        implementation.getAccessTokenSilently { result in
             switch result {
                 case .failure(let error):
                     // Handle the error

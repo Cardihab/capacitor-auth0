@@ -38,29 +38,29 @@
     "prettier": "prettier \"**/*.{css,html,ts,js,java}\"",
     "swiftlint": "node-swiftlint",
     "docgen": "docgen --api Auth0CapacitorPlugin --output-readme README.md --output-json dist/docs.json",
-    "build": "npm run clean && npm run docgen && tsc && rollup -c rollup.config.js",
+    "build": "npm run clean && npm run docgen && tsc && rollup -m inline -c rollup.config.js",
     "clean": "rimraf ./dist",
     "watch": "tsc --watch",
     "prepublishOnly": "npm run build"
   },
   "devDependencies": {
-    "@capacitor/android": "^3.0.0",
-    "@capacitor/core": "^3.0.0",
-    "@capacitor/docgen": "^0.0.10",
-    "@capacitor/ios": "^3.0.0",
+    "@capacitor/android": "^3.2.4",
+    "@capacitor/core": "^3.2.4",
+    "@capacitor/docgen": "^0.0.17",
+    "@capacitor/ios": "^3.2.4",
     "@ionic/eslint-config": "^0.3.0",
-    "@ionic/prettier-config": "^1.0.1",
+    "@ionic/prettier-config": "^2.0.0",
     "@ionic/swiftlint-config": "^1.1.2",
-    "eslint": "^7.11.0",
-    "prettier": "~2.2.0",
-    "prettier-plugin-java": "~1.0.0",
+    "eslint": "^8.0.0",
+    "prettier": "~2.4.1",
+    "prettier-plugin-java": "~1.4.0",
     "rimraf": "^3.0.2",
-    "rollup": "^2.32.0",
+    "rollup": "^2.58.0",
     "swiftlint": "^1.0.1",
-    "typescript": "~4.0.3"
+    "typescript": "4.3"
   },
   "peerDependencies": {
-    "@capacitor/core": "^3.0.0"
+    "@capacitor/core": "^3.2.4"
   },
   "prettier": "@ionic/prettier-config",
   "swiftlint": "@ionic/swiftlint-config",
@@ -76,6 +76,7 @@
     }
   },
   "dependencies": {
-    "@auth0/auth0-spa-js": "^1.16.1"
+    "@auth0/auth0-spa-js": "^1.18.0",
+    "@capacitor/cli": "^3.2.4"
   }
 }
