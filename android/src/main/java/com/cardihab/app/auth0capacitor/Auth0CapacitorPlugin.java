@@ -9,28 +9,54 @@ import com.getcapacitor.annotation.CapacitorPlugin;
 @CapacitorPlugin(name = "Auth0Capacitor")
 public class Auth0CapacitorPlugin extends Plugin {
 
-    private Auth0Capacitor implementation = new Auth0Capacitor();
+    private Auth0Capacitor implementation;
+
+    @Override
+    public void load() {
+        implementation = new Auth0Capacitor(this.getActivity().getApplicationContext());
+    }
 
     @PluginMethod
     public void createAuth0Client(PluginCall call) {
+        String domain = call.getString("domain");
+        String clientId = call.getString("clientId");
+
+        implementation.createAuth0Client(domain, clientId);
+
         call.resolve();
     }
 
     @PluginMethod
     public void login(PluginCall call) {
         String scope = call.getString("scope");
-        String  audience = call.getString("audience");
+        String audience = call.getString("audience");
 
-        call.resolve();
+        implementation.login(scope, audience, call);
+    }
+
+    @PluginMethod
+    public void handleRedirect(PluginCall call) {
+        call.unimplemented("Not implemented on Android.");
+    }
+
+    @PluginMethod
+    public void renew(PluginCall call) {
+        call.unimplemented("Not implemented on Android.");
     }
 
     @PluginMethod
     public void logout(PluginCall call) {
-        call.resolve();
+        implementation.logout(call);
     }
 
     @PluginMethod
     public void getUser(PluginCall call) {
-        call.resolve();
+        implementation.getUser(call);
+    }
+
+    @PluginMethod
+    public void getTokenSilently(PluginCall call) {
+        call.unimplemented("Not implemented on Android.");
+
     }
 }
