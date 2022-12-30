@@ -18,19 +18,21 @@ public class Auth0Capacitor {
 
     private Auth0 client;
     private Context context;
+    private String scheme;
     private String accessToken;
 
     public Auth0Capacitor(Context context) {
         this.context = context;
     }
 
-    public void createAuth0Client(String domain, String clientId) {
+    public void createAuth0Client(String domain, String clientId, String scheme) {
         client = new Auth0(clientId, domain);
+        this.scheme = scheme;
     }
 
     public void login(String scope, String audience, PluginCall call) {
         WebAuthProvider.login(client)
-            //.withScheme("Scheme? capacitor: I think?") // This is required if not using Android "App Links"
+            .withScheme(scheme) // This is required if not using Android "App Links"
             .withScope(scope)
             .withAudience(audience)
             .start(context, new Callback<Credentials, AuthenticationException>() {
@@ -58,7 +60,7 @@ public class Auth0Capacitor {
 
     public void logout(PluginCall call) {
         WebAuthProvider.logout(client)
-            //.withScheme("demo") // Same deal as above, just leaving it here in case I need it later
+            .withScheme(scheme) // Same deal as above, just leaving it here in case I need it later
             .start(context, new Callback<Void, AuthenticationException>() {
                 @Override
                 public void onFailure(@NonNull AuthenticationException e) {

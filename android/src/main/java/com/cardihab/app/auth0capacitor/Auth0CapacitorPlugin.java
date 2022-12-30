@@ -20,8 +20,9 @@ public class Auth0CapacitorPlugin extends Plugin {
     public void createAuth0Client(PluginCall call) {
         String domain = call.getString("domain");
         String clientId = call.getString("clientId");
+        String scheme = call.getString("scheme", "https");
 
-        implementation.createAuth0Client(domain, clientId);
+        implementation.createAuth0Client(domain, clientId, scheme);
 
         call.resolve();
     }
