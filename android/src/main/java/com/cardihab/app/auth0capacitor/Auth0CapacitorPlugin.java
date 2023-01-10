@@ -20,11 +20,9 @@ public class Auth0CapacitorPlugin extends Plugin {
     public void createAuth0Client(PluginCall call) {
         String domain = call.getString("domain");
         String clientId = call.getString("clientId");
-        String scheme = call.getString("scheme", "https");
+        String scheme = call.getString("scheme", "com.myclubsmyscores.ClaytargetApp");
 
-        implementation.createAuth0Client(domain, clientId, scheme);
-
-        call.resolve();
+        implementation.createAuth0Client(domain, clientId, scheme, call);
     }
 
     @PluginMethod

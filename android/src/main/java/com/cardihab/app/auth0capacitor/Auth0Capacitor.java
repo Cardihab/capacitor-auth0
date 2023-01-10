@@ -25,9 +25,12 @@ public class Auth0Capacitor {
         this.context = context;
     }
 
-    public void createAuth0Client(String domain, String clientId, String scheme) {
+    public void createAuth0Client(String domain, String clientId, String scheme, PluginCall call) {
         client = new Auth0(clientId, domain);
         this.scheme = scheme;
+
+
+        call.resolve();
     }
 
     public void login(String scope, String audience, PluginCall call) {
